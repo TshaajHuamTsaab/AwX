@@ -1,85 +1,101 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Nova — Animated Landing</title>
-<link rel="stylesheet" href="style.css">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>格局胜过金钱 · 动态版</title>
+<style>
+  html, body {
+    margin:0; padding:0;
+    width:100%; height:100%;
+    font-family:"Microsoft YaHei",sans-serif;
+    overflow:hidden;
+    background:#000;
+    display:flex; justify-content:center; align-items:center;
+    color:#fff;
+  }
+
+  /* 星点背景 */
+  body::before {
+    content:'';
+    position:absolute;
+    top:0; left:0; width:100%; height:100%;
+    background: radial-gradient(#fff 1px, transparent 1px);
+    background-size: 3px 3px;
+    animation: moveStars 30s linear infinite;
+    opacity:0.3;
+  }
+  @keyframes moveStars {
+    0%{background-position:0 0;}
+    100%{background-position:1000px 1000px;}
+  }
+
+  .container {
+    position:relative;
+    max-width:700px; padding:40px;
+    background: rgba(0,0,0,0.6);
+    border-radius:20px;
+    box-shadow:0 0 30px rgba(255,255,255,0.2);
+    text-align:center;
+  }
+
+  h1 {
+    font-size:2.8em; margin-bottom:20px;
+    color:#ffd700; text-shadow:2px 2px 10px rgba(0,0,0,0.7);
+  }
+
+  .line {
+    font-size:1.3em; line-height:2em; margin:10px 0;
+    opacity:0; transform: translateY(20px);
+    transition: all 0.8s ease;
+  }
+
+  .highlight { color:#ffb347; font-weight:bold; }
+
+  button {
+    margin-top:20px; padding:10px 20px;
+    border:none; border-radius:8px; background:#0b6fc2; color:white;
+    font-weight:bold; cursor:pointer; font-size:1em;
+  }
+</style>
 </head>
 <body>
-<div class="wrap" id="app">
 
-<header>
-<div class="brand">
-  <div class="logo">N</div>
-  <div>
-    <div style="font-weight:700">Nova</div>
-    <div style="font-size:12px;color:var(--muted)">Creative UI Kit</div>
+<div class="container">
+  <h1>格局胜过金钱</h1>
+  <div class="lines">
+    <div class="line">贫困最可怕的，不是物质的贫乏，</div>
+    <div class="line">而是陷入 <span class="highlight">贫困的思维和认知</span>。</div>
+    <div class="line">物质上穷只是穷一时，</div>
+    <div class="line">要是思维和认知上穷，那就穷三代了。</div>
+    <div class="line">要知道给下一代留的不是巨额财富，</div>
+    <div class="line">只要留 <span class="highlight">格局、眼界、思维</span> 就够了，</div>
+    <div class="line">因为这就是最宝贵的财富。</div>
   </div>
+  <button id="readBtn">朗读文字</button>
 </div>
 
-<div class="searchbar" role="search">
-  <input id="searchInput" placeholder="Search projects, movies, accounts…">
-</div>
+<script>
+const lines = document.querySelectorAll('.line');
 
-<nav aria-label="main-nav">
-  <a href="#projects">Projects</a>
-  <a href="#movies">Movies</a>
-  <a href="#accounts">Accounts</a>
-  <a href="#contacts">Contacts</a>
-</nav>
-</header>
+// 逐行淡入动画
+lines.forEach((line, idx) => {
+  setTimeout(() => { line.style.opacity = 1; line.style.transform = 'translateY(0)'; }, idx*800);
+});
 
-<section class="section" id="projects">
-<h2>Projects</h2>
-<div class="grid" id="projectGrid"></div>
-</section>
+// 朗读文字
+const btn = document.getElementById('readBtn');
+btn.onclick = () => {
+  const synth = window.speechSynthesis;
+  synth.cancel();
+  lines.forEach(line => {
+    const utter = new SpeechSynthesisUtterance(line.textContent);
+    utter.lang = 'zh-CN';
+    utter.rate = 0.9;
+    synth.speak(utter);
+  });
+};
+</script>
 
-<section class="section" id="movies">
-<h2>Movies</h2>
-<div class="toolbar">
-  <button class="btn primary" id="openMovieModal">Add Movie</button>
-  <div class="drop" id="dropZone">Drag & drop poster images, video files, or paste links here</div>
-</div>
-<div class="grid" id="movieGrid"></div>
-</section>
-
-<section class="section" id="accounts">
-<h2>AI Accounts</h2>
-<div class="toolbar">
-  <button class="btn primary" id="openAccountModal">Add Account</button>
-</div>
-<div id="accountList"></div>
-</section>
-
-<section class="section" id="contacts">
-<h2>Contacts</h2>
-<div class="toolbar">
-  <button class="btn primary" id="openContactModal">Add Contact</button>
-</div>
-<div id="contactList"></div>
-</section>
-
-<footer>
-<small>© Nova 2025 • Crafted with ♥</small>
-<small class="muted">v3 • Interactive Layout</small>
-</footer>
-
-<!-- 模态弹窗 -->
-<div class="modal" id="inputModal">
-  <div class="panel">
-    <h3 id="modalTitle">Input</h3>
-    <div class="field"><label id="label1">Title</label><input id="input1" type="text"></div>
-    <div class="field" id="field2"><label id="label2">Link / URL</label><input id="input2" type="text"></div>
-    <div class="field" id="field3"><label id="label3">Poster / Extra</label><input id="input3" type="text"></div>
-    <div class="row">
-      <button class="btn primary" id="submitModal">Add</button>
-      <button class="btn ghost" id="closeModal">Cancel</button>
-    </div>
-  </div>
-</div>
-
-<script src="script.js"></script>
 </body>
 </html>
-
